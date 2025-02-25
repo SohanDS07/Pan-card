@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAN Card Detector</title>
+    <style>
+        /* static/style.css - Enhanced Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #c2e5ed); /* Subtle gradient background */
+            color: #333;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .logo-container {
+            position: absolute; /* Position it absolutely relative to the body */
+            top: 20px;      /* Distance from the top */
+            left: 20px;     /* Distance from the left */
+            z-index: 1000;   /* Ensure logo is on top of other content */
+        }
+
+        .logo {
+            height: 60px; /* Adjust logo height as needed */
+            /* You can add more styling to the logo image itself if needed */
+        }
+
+
+        .container {
+            background-color: #fff;
+            padding: 40px; /* Slightly increased padding */
+            border-radius: 15px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15); /* More pronounced shadow */
+            text-align: center;
+            width: 85%;
+            max-width: 950px; /* Further increased max width */
+            position: relative; /* To contain absolute positioned elements inside if needed */
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px; /* Slightly increased margin */
+            font-size: 2.4em; /* Slightly larger heading */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle text shadow */
+        }
+
+        .upload-section, .image-preview, .result-section, .progress-bar-container {
+            margin-bottom: 25px; /* Slightly increased margin */
+        }
+
+        .upload-button, .classify-button {
+            display: inline-block;
+            padding: 12px 25px; /* Slightly larger button padding */
+            border: none;
+            border-radius: 10px; /* More rounded buttons */
+            cursor: pointer;
+            font-size: 16px; /* Slightly larger font size */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Add transform transition */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Button shadow */
+        }
+
+        .upload-button {
+            background-color: #3498db;
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .classify-button {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+
+        .upload-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1); /* Enhanced shadow on hover */
+        }
+
+        .classify-button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1); /* Enhanced shadow on hover */
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .image-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px; /* Added margin for separation */
+        }
+
+        .image-preview h2 {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 1.3em;
+        }
+
+        .uploaded-img, .annotated-img {
+            max-width: 95%;
+            max-height: 400px; /* Increased max height */
+            height: auto;
+            border-radius: 10px; /* More rounded images */
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08); /* Image shadow */
+            transition: box-shadow 0.3s ease; /* Shadow transition */
+        }
+
+        .uploaded-img:hover, .annotated-img:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12); /* Enhanced shadow on hover */
+        }
+
+        .progress-bar-container {
+            background-color: #f0f0f0; /* Slightly lighter progress bar background */
+            border-radius: 10px; /* Rounded progress bar */
+            height: 35px; /* Slightly increased height */
+            margin-top: 15px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .analyzing-text {
+            margin-bottom: 8px; /* Increased margin */
+            font-size: 15px; /* Slightly larger font */
+            color: #666;
+        }
+
+        .funny-icon {
+            font-size: 1.3em; /* Slightly larger icon */
+            margin-left: 6px;
+        }
+
+        .progress-bar {
+            background-color: #2ecc71;
+            height: 12px; /* Slightly increased height */
+            width: 0%;
+            border-radius: 10px; /* Rounded progress bar */
+            transition: width 0.5s ease; /* Slightly smoother transition */
+            position: relative;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-percent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 13px; /* Slightly larger percentage text */
+            font-weight: bold;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.2); /* Text shadow for better readability */
+        }
+
+
+        .result-section h2 {
+            color: #555;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .result-box {
+            background-color: #eafaf1;
+            border: 2px solid #2ecc71;
+            border-radius: 10px; /* Rounded result box */
+            padding: 20px; /* Increased padding */
+            margin-top: 20px;
+            font-size: 17px; /* Slightly larger font size */
+            color: #27ae60;
+            text-align: center; /* Center text in result box */
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03); /* Inset shadow for depth */
+        }
+
+        .result-box.bw-image {
+            border-color: #f39c12;
+            background-color: #fff9e6;
+            color: #d35400;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="https://www.enhancesys.com/storage/temp/public/986/5c3/99d/enhancesyslogo__834.png" alt="Enhancesys" class="logo" srcset="https://www.enhancesys.com/storage/temp/public/986/5c3/99d/enhancesyslogo__834.png 834w, https://www.enhancesys.com/storage/temp/public/986/5c3/99d/enhancesyslogo__400.png 400w, https://www.enhancesys.com/storage/temp/public/986/5c3/99d/enhancesyslogo__768.png 768w" sizes="(max-width: 834px) 100vw, 834px">
+    </div>
+    <div class="container">
+        <h1>PAN Card Detector</h1>
+
+        <div class="upload-section">
+            <form method="post" enctype="multipart/form-data" action="/">  <!-- ADD action="/" HERE -->
+                <input type="file" name="file" id="imageUpload" accept="image/*">
+                <label for="imageUpload" class="upload-button">Choose Image</label>
+                <button type="submit" class="classify-button">Classify</button>
+            </form>
+        </div>
+
+        <div class="image-preview" id="imagePreview">
+            {% if image_url %}
+                <h2>Uploaded Image</h2>
+                <img src="{{ image_url }}" alt="Uploaded Image" class="uploaded-img">
+            {% endif %}
+            {% if annotated_image_url %}
+                <h2>Processed Image</h2>
+                <img src="{{ annotated_image_url }}" alt="Processed Image" class="annotated-img">
+            {% endif %}
+        </div>
+
+        <div class="progress-bar-container" {% if progress == 0 %}style="display:none;"{% endif %}>
+            <div class="analyzing-text" id="analyzingText" style="display:none;">Analyzing... <span class="funny-icon">🧐</span></div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar" style="width: {{ progress }}%;">
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section" {% if result %}style="display:block;"{% else %}style="display:none;"{% endif %}>
+            <h2>Classification Result</h2>
+            <div class="result-box {% if is_bw %}bw-image{% endif %}">
+                <p id="resultText">{{ result }}</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageUpload = document.getElementById('imageUpload');
+            const imagePreview = document.getElementById('imagePreview');
+            const progressBarContainer = document.querySelector('.progress-bar-container');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent'); // Get percentage element
+            const analyzingText = document.getElementById('analyzingText'); // Get analyzing text element
+            const resultSection = document.querySelector('.result-section');
+
+            imageUpload.addEventListener('change', () => {
+                imagePreview.innerHTML = ''; // Clear previous preview
+                resultSection.style.display = 'none'; // Hide result section on new upload
+                progressBarContainer.style.display = 'none'; // Hide progress bar initially
+                analyzingText.style.display = 'none'; // Hide analyzing text initially
+
+                const file = imageUpload.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('uploaded-img'); // Add class for styling
+                        imagePreview.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            const classifyButton = document.querySelector('.classify-button');
+            if (classifyButton) {
+                classifyButton.addEventListener('click', () => {
+                    progressBarContainer.style.display = 'block';
+                    analyzingText.style.display = 'block'; // Show analyzing text
+                    progressBar.style.width = '0%'; // Reset progress to 0
+                    progressPercent.textContent = '0%'; // Reset percentage text
+
+                    // Simulate progress (replace with actual progress updates if needed)
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 10; // Increment progress (adjust speed as needed)
+                        progressBar.style.width = progress + '%';
+                        progressPercent.textContent = progress + '%'; // Update percentage text
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            // In a real application, you'd get the final result from the backend here
+                            // and update the result section.
+                        }
+                    }, 200); // Update every 200ms (adjust timing as needed)
+                });
+            }
+        });
+    </script>
+</body>
+</html>

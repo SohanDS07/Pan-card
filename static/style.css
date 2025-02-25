@@ -1,0 +1,148 @@
+/* static/style.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f8f8; /* Lighter background */
+    color: #333;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Still ensure full viewport height */
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px; /* Slightly reduced padding */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 85%; /* Slightly wider container */
+    max-width: 900px; /* Increased max width */
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px; /* Reduced margin */
+    font-size: 2em; /* Slightly larger heading for emphasis */
+}
+
+.upload-section, .image-preview, .result-section, .progress-bar-container {
+    margin-bottom: 20px; /* Reduced margin */
+}
+
+.upload-button {
+    display: inline-block;
+    padding: 10px 20px; /* Slightly smaller button padding */
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px; /* Slightly smaller font size */
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.upload-button:hover {
+    background-color: #2980b9;
+}
+
+.classify-button {
+    display: inline-block;
+    padding: 10px 20px; /* Slightly smaller button padding */
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px; /* Slightly smaller font size */
+    transition: background-color 0.3s ease;
+}
+
+.classify-button:hover {
+    background-color: #27ae60;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.image-preview {
+    display: flex; /* Use flexbox to arrange images horizontally if needed */
+    flex-direction: column; /* Stack images vertically by default */
+    align-items: center; /* Center images horizontally */
+}
+
+.uploaded-img, .annotated-img {
+    max-width: 95%; /* Ensure images fit within container */
+    max-height: 300px; /* Limit image height to prevent scrolling */
+    height: auto;
+    border-radius: 8px;
+    margin-top: 10px; /* Reduced margin */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.progress-bar-container {
+    background-color: #e0e0e0; /* Light grey background for progress bar */
+    border-radius: 8px;
+    height: 30px; /* Increased height to accommodate text and percentage */
+    margin-top: 10px; /* Reduced margin */
+    overflow: hidden;
+    position: relative; /* For positioning percentage text */
+    display: flex; /* Use flexbox for centering content */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    flex-direction: column; /* Stack analyzing text and progress bar */
+}
+
+.analyzing-text {
+    margin-bottom: 5px; /* Space between text and progress bar */
+    font-size: 14px;
+    color: #555;
+}
+
+.funny-icon {
+    font-size: 1.2em; /* Adjust icon size */
+    margin-left: 5px;
+}
+
+.progress-bar {
+    background-color: #2ecc71;
+    height: 10px; /* Height of the actual progress bar inside container */
+    width: 0%;
+    border-radius: 8px;
+    transition: width 0.4s ease;
+    position: relative; /* To position percentage text inside */
+    overflow: visible; /* To show percentage text if it goes beyond bar width initially */
+    display: flex; /* Flexbox for centering percentage */
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-percent {
+    position: absolute; /* Positioned inside progress bar */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Fine-tune centering */
+    color: white; /* White text for percentage */
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+.result-box {
+    background-color: #eafaf1;
+    border: 2px solid #2ecc71;
+    border-radius: 8px;
+    padding: 15px; /* Reduced padding */
+    margin-top: 15px; /* Reduced margin */
+    font-size: 16px; /* Slightly smaller font size */
+    color: #27ae60;
+    text-align: left;
+}
+
+.result-box.bw-image {
+    border-color: #f39c12;
+    background-color: #fff9e6;
+    color: #d35400;
+}
