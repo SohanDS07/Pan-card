@@ -1,4 +1,4 @@
-# app.py
+# app.py (Final Updated Code)
 import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 import cv2
@@ -9,8 +9,9 @@ import re
 from werkzeug.utils import secure_filename
 from functools import wraps
 import time
-import base64 # Import base64 for encoding images
-import io     # Import io for working with image bytes
+import base64
+import io
+import uuid  # Import uuid for generating unique API keys
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -21,10 +22,12 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 reader = easyocr.Reader(['en'], gpu=False)
 
-API_KEYS = {
-    "your_api_key_1": "user1",
-    "your_api_key_2": "user2",
-}
+# --- API Key Management (Simplified In-Memory Dictionary) ---
+API_KEYS = {}  # Start with an empty dictionary, keys will be generated and added here
+
+def generate_api_key():
+    """Generates a unique API key."""
+    return str(uuid.uuid4())  # Using uuid for simple unique key generation
 
 def require_api_key(f):
     @wraps(f)
@@ -157,7 +160,17 @@ def classify_image(filename):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-# --- API Endpoint ---
+# --- API Endpoint to Get a New API Key ---
+@app.route('/api/get_api_key', methods=['GET'])
+def get_api_key():
+    """Endpoint to generate and provide a new API key."""
+    new_key = generate_api_key()
+    API_KEYS[new_key] = "user_placeholder"  # In real app, associate with user info
+    print(f"Generated API Key: {new_key}") # Log the generated key (for demonstration)
+    return jsonify({"api_key": new_key, "message": "API key generated successfully. Please use this key in the X-API-Key header."}), 200
+
+
+# --- API Endpoint for Classification (No Changes) ---
 @app.route('/api/classify_pan_card', methods=['POST'])
 @require_api_key
 def api_classify_pan_card():
